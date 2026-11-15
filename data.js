@@ -231,8 +231,8 @@ window.PORTFOLIO = {
   stickers: [
     // spotify: lagu yang diputar saat stiker ditekan (tekan lagi = jeda)
     // start  : mulai dari detik ke berapa (95 = 1:35)
-    { img: "stickers/spotify.png", text: "now playing: Timeless 🎧", at: "intro", side: "left", top: 30, tilt: -10,
-      spotify: "spotify:track:2Kbc5HFurzJ33w6y0PAuIM", start: 95 }, // Timeless — The Weeknd & Playboi Carti
+    { img: "stickers/spotify.png", text: "now playing: Anthem Jawir 🎧", at: "intro", side: "left", top: 30, tilt: -10,
+      spotify: "spotify:track:779V1ZMOHlPYuZeabXyGzy", start: 0 }, // ANTHEM JAWIR — Tenxi & Jemsii
     { img: "stickers/curry.png", text: "night night 🌙", at: "intro", side: "right", top: 60, tilt: 8 },
     { img: "stickers/macbook.png", text: "where every project starts 💻", at: "projects", side: "right", top: 8, tilt: 9, mobile: true },
     { img: "stickers/subway.png", text: "fuel for late-night coding 🌯", at: "projects", side: "left", top: 60, tilt: -8 },
