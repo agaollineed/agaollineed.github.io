@@ -586,11 +586,68 @@
     });
   }
 
+  // ── Lagu dari file sendiri (stiker dengan `audio`) ──────────
+  // Diputar otomatis begitu halaman dibuka. Browser umumnya menahan suara sampai
+  // pengunjung berinteraksi, jadi kalau ditolak, lagu mulai pada klik/ketuk/tombol
+  // pertama di mana pun. Stiker musiknya menjadi tombol putar/jeda.
+  var song = null, songPausedByUser = false;
+  var songSticker = (D.stickers || []).filter(function (s) { return s.audio; })[0];
+
+  function tandaiPutar() {
+    var main = song && !song.paused;
+    document.querySelectorAll(".stk-music").forEach(function (b) { b.classList.toggle("playing", main); });
+  }
+
+  if (songSticker) {
+    song = new Audio(songSticker.audio);
+    song.loop = true;
+    song.preload = "auto";
+    song.volume = typeof songSticker.volume === "number" ? songSticker.volume : 0.7;
+    if (songSticker.start) {
+      song.addEventListener("loadedmetadata", function () { song.currentTime = songSticker.start; }, { once: true });
+    }
+    song.addEventListener("play", tandaiPutar);
+    song.addEventListener("pause", tandaiPutar);
+
+    var mulai = function () {
+      if (songPausedByUser || !song.paused) return Promise.resolve();
+      var p = song.play();
+      return p && p.catch ? p : Promise.resolve();
+    };
+
+    var interaksi = ["pointerdown", "keydown", "touchend"];
+    var padaInteraksi = function (e) {
+      // klik pada stiker musik diurus stiker itu sendiri (putar/jeda)
+      if (e.target && e.target.closest && e.target.closest(".stk-music")) return;
+      mulai().then(function () {
+        if (!song.paused) interaksi.forEach(function (n) { window.removeEventListener(n, padaInteraksi, true); });
+      }, function () {});
+    };
+
+    if (songSticker.autoplay !== false) {
+      mulai().catch(function () {
+        interaksi.forEach(function (n) { window.addEventListener(n, padaInteraksi, true); });
+      });
+    }
+  }
+
+  function toggleSong() {
+    if (!song) return;
+    if (song.paused) {
+      songPausedByUser = false;
+      var p = song.play();
+      if (p && p.catch) p.catch(function () {});
+    } else {
+      songPausedByUser = true;
+      song.pause();
+    }
+  }
+
   (D.stickers || []).forEach(function (s) {
     var host = s.at === "intro" ? document.querySelector(".intro") : $(s.at);
     if (!host || !s.img) return;
 
-    var b = el("button", "stk " + (s.side === "left" ? "stk-left" : "stk-right") + (s.mobile ? " stk-mobile" : "") + (s.spotify ? " stk-music" : ""));
+    var b = el("button", "stk " + (s.side === "left" ? "stk-left" : "stk-right") + (s.mobile ? " stk-mobile" : "") + (s.spotify || s.audio ? " stk-music" : ""));
     b.type = "button";
     b.style.setProperty("--top", (s.top || 0) + "%");
     b.style.setProperty("--tilt", (s.tilt || 0) + "deg");
@@ -618,6 +675,7 @@
       e.stopPropagation();
       if (b.dataset.dragged) { delete b.dataset.dragged; return; } // habis diseret: bukan klik
       if (s.spotify) toggleMusic(s.spotify, s.start || 0);
+      if (s.audio) toggleSong();
       var wasOpen = openSticker === b;
       closeSticker();
       if (wasOpen || !s.text) return;

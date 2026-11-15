@@ -229,10 +229,14 @@ window.PORTFOLIO = {
     size  : pengali ukuran, contoh 1.4 = 40% lebih besar (berguna untuk gambar yang lebar)
   */
   stickers: [
-    // spotify: lagu yang diputar saat stiker ditekan (tekan lagi = jeda)
-    // start  : mulai dari detik ke berapa (95 = 1:35)
-    { img: "stickers/spotify.png", text: "now playing: Anthem Jawir 🎧", at: "intro", side: "left", top: 30, tilt: -10,
-      spotify: "spotify:track:779V1ZMOHlPYuZeabXyGzy", start: 0 }, // ANTHEM JAWIR — Tenxi & Jemsii
+    // audio   : file lagu di folder audio/, diputar otomatis & berulang; stiker = tombol putar/jeda
+    //           (browser baru membunyikannya setelah klik/ketuk pertama pengunjung di halaman)
+    // start   : mulai dari detik ke berapa (95 = 1:35)
+    // volume  : 0–1
+    // autoplay: false = baru diputar saat stiker ditekan
+    // (Alternatif: spotify: "spotify:track:<id>" memakai pemutar Spotify, bukan file sendiri.)
+    { img: "stickers/spotify.png", text: "now playing: Anthem Jawir — Tenxi & Jemsii 🎧", at: "intro", side: "left", top: 30, tilt: -10,
+      audio: "audio/anthem-jawir.mp3", start: 0, volume: 0.7, autoplay: true },
     { img: "stickers/curry.png", text: "night night 🌙", at: "intro", side: "right", top: 60, tilt: 8 },
     { img: "stickers/macbook.png", text: "where every project starts 💻", at: "projects", side: "right", top: 8, tilt: 9, mobile: true },
     { img: "stickers/subway.png", text: "fuel for late-night coding 🌯", at: "projects", side: "left", top: 60, tilt: -8 },
