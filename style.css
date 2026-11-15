@@ -1,0 +1,727 @@
+/* ── Token warna ─────────────────────────────────────────────── */
+:root {
+  --hue: 275; /* diatur dari bannerHue di data.js */
+  --slant: 40px; /* besar kemiringan tepi banner dan kartu */
+  --gap: 38px;   /* celah antara dua tepi miring yang berhadapan (sama seperti thijs.net) */
+  --green: #17824a;
+  --bg: #faf9f5;
+  --card: #ffffff;
+  --ink: #161513;
+  --muted: #6b675e;
+  --line: #ebe8e0;
+  --chip: #f4f2ec;
+  --accent: hsl(var(--hue) 60% 48%);
+  --accent-2: hsl(calc(var(--hue) + 45) 72% 55%);
+  --now: #2e9e5b;
+  --blue: #1565c0;
+  --shadow: 0 14px 34px -22px rgba(70, 50, 10, .28);
+
+  --serif: "Fraunces", Georgia, serif;
+  /* Semua teks selain judul memakai font bawaan sistem, seperti thijs.net */
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  color-scheme: light; /* situs ini hanya bertema terang */
+}
+
+/* ── Dasar ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+
+h1, h2, h3 { font-family: var(--serif); letter-spacing: -.02em; }
+
+h2 { font-size: clamp(32px, 5vw, 42px); line-height: 1.1; margin: 0 0 8px; font-weight: 700; }
+
+p { margin: 0 0 16px; }
+
+.sub { color: var(--muted); margin-bottom: 24px; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 64px; }
+
+:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 3px; border-radius: 6px; }
+
+/* ── Navigasi ────────────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 14px max(20px, calc((100vw - 1080px) / 2 + 20px));
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav nav { display: flex; align-items: center; gap: 22px; }
+
+.nav nav a {
+  font-family: var(--mono);
+  font-size: 14px;
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color .2s;
+}
+
+.nav nav a:hover { border-color: var(--accent-2); }
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero-wrap { position: relative; margin-top: 12px; }
+
+.hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 400px;
+  padding: 56px 56px 96px;
+  border-radius: 24px;
+  color: #fff;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--slant)), 0 100%);
+  background: hsl(var(--hue) 70% 12%) center / cover no-repeat;
+}
+
+.hero > * { position: relative; z-index: 1; }
+
+/* Banner bokeh digambar oleh app.js di kanvas ini */
+.hero canvas { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+
+.hero.has-banner canvas { display: none; }
+
+/* Video banner: muncul perlahan begitu mulai diputar */
+.hero video { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s; pointer-events: none; }
+
+.hero.video-on video { opacity: 1; }
+
+/* Video bisa punya adegan terang, jadi seluruh banner sedikit digelapkan */
+.hero.video-on::after { background: linear-gradient(90deg, rgba(8, 2, 20, .68), rgba(8, 2, 20, .2) 75%); }
+
+/* Sisi kiri digelapkan agar nama tetap terbaca di atas video atau foto apa pun */
+.hero::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, rgba(8, 2, 20, .62), rgba(8, 2, 20, 0) 70%); pointer-events: none; }
+
+.hero h1 {
+  margin: 0 0 14px;
+  font-size: clamp(42px, 7.5vw, 72px);
+  line-height: 1.02;
+  font-weight: 700;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .25);
+}
+
+.tagline { margin: 0; font-family: var(--mono); font-size: clamp(14px, 2vw, 19px); text-shadow: 0 1px 10px rgba(0, 0, 0, .3); }
+
+/* Foto bundar dengan cincin teks berputar.
+   --av = diameter seluruh lingkaran (foto + cincin); semua ukuran lain ikut menyesuaikan. */
+.avatar {
+  --av: 340px;
+  position: absolute;
+  z-index: 3;
+  right: 36px;
+  bottom: calc(var(--av) * -.54); /* titik tengah foto tepat di tepi bawah banner */
+  width: var(--av);
+  height: var(--av);
+}
+
+.ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 28s linear infinite; }
+
+.ring-bg { fill: var(--card); transition: fill .3s; }
+
+/* ukuran dalam satuan gambar cincin (lebar 200), jadi ikut membesar bersama --av */
+.ring-text { font-family: var(--sans); font-size: 9px; font-weight: 600; fill: var(--ink); }
+
+.photo {
+  position: absolute;
+  inset: 11.5%;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(140deg, hsl(var(--hue) 65% 38%), hsl(calc(var(--hue) + 45) 78% 62%));
+  color: #fff;
+  font-family: var(--serif);
+  font-size: calc(var(--av) * .26);
+  font-weight: 700;
+}
+
+.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── Kartu ───────────────────────────────────────────────────── */
+.card {
+  --pt: 48px;  /* jarak isi dari tepi atas */
+  --pb: 52px;  /* jarak isi dari tepi bawah */
+  --px: 56px;  /* jarak isi dari tepi kiri/kanan */
+  position: relative;
+  margin-top: var(--gap); /* celah antarbagian */
+  padding: calc(var(--pt) + var(--st, 0px)) var(--px) calc(var(--pb) + var(--sb, 0px));
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  transition: background-color .3s, border-color .3s;
+}
+
+/* Kartu bertepi miring dengan pola zig-zag seperti thijs.net.
+   Arah tiap tepi dipilih lewat kelas:
+     top-up      tepi atas naik ke kanan   (↗)
+     top-down    tepi atas turun ke kanan  (↘)
+     bottom-up   tepi bawah naik ke kanan  (↗)
+     bottom-down tepi bawah turun ke kanan (↘)
+   Tepi bawah satu kartu harus searah dengan tepi atas kartu berikutnya.
+   Kartu ditarik ke atas sebesar kemiringannya, sehingga jarak antara
+   dua tepi miring yang berhadapan tepat sebesar --gap. */
+.top-up, .top-down { --st: var(--slant); --pt: 34px; margin-top: calc(var(--gap) - var(--slant)); }
+.bottom-up, .bottom-down { --sb: var(--slant); --pb: 28px; }
+
+.top-up { --tl: var(--slant); --tr: 0px; }
+.top-down { --tl: 0px; --tr: var(--slant); }
+.bottom-up { --bl: 0px; --br: var(--slant); }
+.bottom-down { --bl: var(--slant); --br: 0px; }
+
+/* Kartu pertama: jarak isi lebih lega karena foto profil menjorok ke dalamnya */
+.card.intro { --pt: 48px; z-index: 1; }
+
+.card.slant { background: none; border-color: transparent; box-shadow: none; isolation: isolate; }
+
+.card.slant::before,
+.card.slant::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: polygon(
+    0 var(--tl, 0px), 100% var(--tr, 0px),
+    100% calc(100% - var(--br, 0px)), 0 calc(100% - var(--bl, 0px))
+  );
+  transition: background-color .3s;
+}
+
+.card.slant::before { inset: -1px; border-radius: 25px; background: var(--line); } /* garis tepi */
+.card.slant::after { inset: 0; border-radius: 24px; background: var(--card); }      /* isi kartu */
+
+.lead { font-size: 20px; max-width: 34em; }
+
+.lead b { font-family: var(--serif); font-weight: 700; }
+
+/* Kata berwarna (ITS, Surabaya) memakai font sistem, seperti "Stanford" di thijs.net */
+.lead b.blue, .lead b.green { font-family: var(--sans); font-weight: 600; }
+
+.lead b.blue { color: var(--blue); }
+
+.lead b.green { color: var(--green); }
+
+/* Gambar kecil bergaya stiker: tepi putih, bayangan, sedikit miring */
+.sticker {
+  display: inline-block;
+  width: 1.75em;
+  height: 1.75em;
+  margin: -.5em .05em -.45em;
+  padding: .14em;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
+  vertical-align: middle;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 3px 8px rgba(0, 0, 0, .22);
+  transform: rotate(-8deg);
+  transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
+}
+
+.sticker:hover { transform: rotate(6deg) scale(1.25); }
+
+/* Emoji dengan animasi idle: bergoyang ke kanan-kiri terus-menerus */
+.idle {
+  display: inline-block;
+  margin: 0 .08em;
+  font-size: 1.35em;
+  line-height: 1;
+  vertical-align: -.12em;
+  transform-origin: 50% 90%;
+  animation: idle 1.4s ease-in-out infinite alternate;
+}
+
+.timeline:has(li:only-child), .timeline:has(li[hidden]) { margin-bottom: 26px; }
+
+/* Linimasa sekarang / sebelumnya */
+.timeline { list-style: none; margin: 24px 0 28px; padding: 0 0 0 22px; border-left: 2px solid var(--line); }
+
+.timeline li { position: relative; display: flex; flex-direction: column; padding-bottom: 14px; }
+
+.timeline li:last-child { padding-bottom: 0; }
+
+/* Titik linimasa: pusatnya tepat di tengah garis (garis 2px berada 22–24px di kiri isi)
+   dan sejajar dengan tengah baris label NOW / PREVIOUSLY (tinggi baris 13px × 1.6). */
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -31px;  /* -23px (tengah garis) - 8px (setengah titik) */
+  top: 2.4px;   /* 10.4px (tengah label) - 8px */
+  width: 16px;  /* termasuk tepi 3px, jadi bulatan berwarnanya 10px */
+  height: 16px;
+  border-radius: 50%;
+  background: var(--muted);
+  border: 3px solid var(--card);
+  opacity: .6;
+}
+
+.timeline li.now::before { background: var(--now); opacity: 1; animation: pulse 2.4s ease-out infinite; }
+
+.timeline .label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+.timeline .now .label { color: var(--now); }
+
+.highlights { list-style: none; margin: 0 0 28px; padding: 0; }
+
+.highlights li { display: grid; grid-template-columns: 34px 1fr; padding: 3px 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--chip);
+  font-size: 15px;
+  text-decoration: none;
+  transition: transform .2s, border-color .2s;
+}
+
+.chip:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+.chip svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── Pengalaman: Work, Academic, Publication ────────────────── */
+.xp-group + .xp-group { margin-top: 30px; padding-top: 28px; border-top: 1px solid var(--line); }
+
+.xp-group-title { margin: 0 0 22px; font-size: 24px; line-height: 1.2; }
+
+.xp-list { list-style: none; margin: 0; padding: 0; }
+
+.xp-item {
+  --logo: 60px; /* diameter stiker logo */
+  --xg: 22px;   /* jarak logo ke teks */
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--logo) 1fr;
+  column-gap: var(--xg);
+  padding-bottom: 28px;
+}
+
+.xp-item:last-child { padding-bottom: 4px; }
+
+/* garis titik-titik turun dari bawah logo */
+.xp-item::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--logo) / 2 - 1px);
+  top: calc(var(--logo) + 8px);
+  bottom: 6px;
+  border-left: 2px dotted #d3cdbf;
+}
+
+/* Logo bergaya stiker: bulat, tepi putih tebal, bayangan, sedikit miring */
+.xp-logo {
+  position: relative;
+  z-index: 1;
+  width: var(--logo);
+  height: var(--logo);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 4px 10px rgba(0, 0, 0, .2);
+  transform: rotate(-6deg);
+  transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
+}
+
+.xp-item:nth-child(even) .xp-logo { transform: rotate(5deg); }
+
+.xp-item:hover .xp-logo { transform: rotate(0deg) scale(1.08); }
+
+.xp-logo img { width: 100%; height: 100%; padding: 5%; object-fit: contain; display: block; }
+
+.xp-logo.cover img { padding: 0; object-fit: cover; }
+
+.xp-emoji { font-size: calc(var(--logo) * .48); line-height: 1; }
+
+.xp-body { min-width: 0; padding-top: 17px; } /* baris nama sejajar dengan tengah logo */
+
+.xp-name { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.35; }
+
+.xp-name > * {
+  text-decoration: underline wavy color-mix(in srgb, var(--blue) 50%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+}
+
+.xp-name a { color: inherit; }
+.xp-name a:hover { color: var(--blue); }
+
+.xp-publication .xp-name { font-size: 17px; }
+.xp-publication .xp-name > * { text-decoration: none; }
+
+.xp-role { position: relative; margin: 12px 0 0; font-size: 16px; font-weight: 600; line-height: 1.5; }
+
+/* titik di garis, sejajar dengan baris posisi/gelar */
+.xp-role::before {
+  content: "";
+  position: absolute;
+  left: calc(0px - var(--xg) - var(--logo) / 2 - 6px);
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--card);
+  background: var(--blue);
+}
+
+.xp-date { margin: 2px 0 0; font-size: 15px; color: var(--muted); }
+
+.xp-desc { position: relative; margin: 8px 0 0; padding-left: 18px; font-size: 16px; line-height: 1.55; color: #3b3832; }
+
+.xp-desc::before { content: "•"; position: absolute; left: 2px; color: #bdb6a6; }
+
+/* ── Proyek ──────────────────────────────────────────────────── */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+
+.filter {
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color .2s, color .2s;
+}
+
+.filter:hover { color: var(--ink); border-color: var(--muted); }
+
+.filter[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--card); }
+
+.grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+
+.project {
+  position: relative;
+  grid-column: span var(--span, 3);
+  /* Tinggi kartu ikut panjang judul/deskripsi; area atas disisakan untuk emoji/gambar,
+     label selalu menempel di bawah, dan kartu sebaris sama tinggi. */
+  min-height: 290px;
+  padding: 150px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, var(--c1, #0f6b5c), var(--c2, #7fd1b9));
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform .25s, box-shadow .25s;
+}
+
+.project::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .28) 1.4px, transparent 2px);
+  background-size: 18px 18px;
+  -webkit-mask-image: linear-gradient(200deg, #000, transparent 70%);
+  mask-image: linear-gradient(200deg, #000, transparent 70%);
+}
+
+.project:hover { transform: translateY(-5px) rotate(-.5deg); box-shadow: 0 22px 36px -22px rgba(0, 0, 0, .5); }
+
+.project img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Video rekaman jelajah situs sebagai sampul: menutupi kartu, bagian atas situs yang terlihat */
+.project video.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  background: #fff;
+}
+
+.project.has-video::before { display: none; } /* pola titik tidak perlu di atas video */
+
+/* sedikit gelap di bawah supaya label judul tetap menonjol di atas video */
+.project.has-video::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(0, 0, 0, .28), transparent);
+  pointer-events: none;
+}
+
+.project.has-video .label,
+.project.has-video .year,
+.project.has-video .star { z-index: 1; }
+
+.project .glyph {
+  position: absolute;
+  right: 7%;
+  top: 14px;
+  transform: rotate(8deg);
+  font-size: 120px;
+  line-height: 1;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, .28));
+  transition: transform .35s;
+}
+
+.project:hover .glyph { transform: translateY(-4px) rotate(-4deg) scale(1.08); }
+
+.project .year { position: absolute; top: 12px; left: 12px; padding: 2px 8px; border-radius: 6px; background: #fff; color: #111; font-family: var(--serif); font-size: 14px; font-weight: 500; }
+
+.project .star { position: absolute; top: 9px; right: 12px; font-size: 18px; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .35)); }
+
+.project .label { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+
+.project .label h3 { margin: 0; padding: 4px 12px 5px; border-radius: 10px; background: var(--card); font-size: 24px; line-height: 1.15; }
+
+.project .label p { margin: 0; padding: 3px 10px; border-radius: 8px; background: var(--card); font-size: 14px; line-height: 1.4; }
+
+.empty { grid-column: 1 / -1; color: var(--muted); font-size: 15px; }
+
+/* ── Kontak & footer ─────────────────────────────────────────── */
+.contact {
+  background: hsl(var(--hue) 68% 12%);
+  border-color: hsl(var(--hue) 68% 12%);
+  color: #fff;
+  overflow: hidden;
+  /* tepi atas ikut miring supaya celah dengan kartu di atasnya rata */
+  clip-path: polygon(0 var(--tl, 0px), 100% var(--tr, 0px), 100% 100%, 0 100%);
+}
+
+.contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(45% 90% at 100% 0%, hsl(calc(var(--hue) + 40) 85% 62% / .55), transparent 65%),
+    radial-gradient(40% 80% at 78% 110%, hsl(var(--hue) 90% 62% / .6), transparent 60%);
+  pointer-events: none;
+}
+
+.contact > * { position: relative; }
+
+.contact h2 { font-size: clamp(38px, 6vw, 56px); margin-bottom: 12px; }
+
+.contact p { max-width: 30em; opacity: .9; margin-bottom: 24px; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: #fff;
+  color: hsl(var(--hue) 68% 14%);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .2s;
+}
+
+.button:hover { transform: translateY(-2px); }
+
+.footer {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.footer a { text-decoration: none; }
+.footer a:hover { color: var(--ink); }
+
+/* ── Animasi ─────────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes idle {
+  from { transform: translateX(-2px) rotate(-12deg); }
+  to { transform: translateX(2px) rotate(12deg); }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--now) 55%, transparent); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ── Responsif ───────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .project { grid-column: span 3; }
+  .hero { min-height: 340px; padding: 48px 32px 88px; }
+  .card { --pt: 40px; --pb: 44px; --px: 32px; }
+  .top-up, .top-down { --pt: 30px; }
+  .bottom-up, .bottom-down { --pb: 26px; }
+  .card.intro { --pt: 70px; }
+  .avatar { --av: 250px; right: 24px; }
+  .ring-text { font-size: 10.5px; }
+}
+
+@media (max-width: 600px) {
+  body { font-size: 16.5px; }
+  .hide-sm { display: none; }
+  .nav nav { gap: 16px; }
+  .nav nav a { font-size: 13px; }
+  :root { --slant: 20px; --gap: 20px; }
+  .hero { min-height: 300px; padding: 40px 22px 96px; border-radius: 20px; }
+  .avatar { --av: 176px; right: 10px; }
+  .ring-text { font-size: 12.5px; }
+  .card { --pt: 32px; --pb: 36px; --px: 22px; border-radius: 20px; }
+  .top-up, .top-down { --pt: 26px; }
+  .bottom-up, .bottom-down { --pb: 22px; }
+  .card.slant::before { border-radius: 21px; }
+  .card.slant::after { border-radius: 20px; }
+  .card.intro { --pt: 36px; }
+  .lead { font-size: 18px; }
+  .xp-item { --logo: 46px; --xg: 14px; padding-bottom: 24px; }
+  .xp-body { padding-top: 11px; }
+  .xp-name { font-size: 17px; }
+  .xp-publication .xp-name { font-size: 16px; }
+  .xp-group-title { font-size: 22px; }
+  .grid { gap: 14px; }
+  .project { grid-column: span 6; min-height: 240px; padding-top: 128px; }
+  .project .glyph { font-size: 100px; }
+  .project .label h3 { font-size: 22px; }
+}
+
+/* ── Stiker ──────────────────────────────────────────────────── */
+body { overflow-x: clip; } /* stiker yang menjorok tidak membuat halaman bisa digeser ke samping */
+
+.stk {
+  --s: 92px; /* semua stiker dimasukkan ke kotak seukuran ini */
+  position: absolute;
+  top: var(--top);
+  z-index: 5;
+  width: calc(var(--s) * var(--k, 1));   /* --k = pengali ukuran per stiker (data.js: size) */
+  height: calc(var(--s) * var(--k, 1));
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;   /* seret di layar sentuh tidak ikut menggulir halaman */
+  user-select: none;
+  -webkit-user-select: none;
+  transform: rotate(var(--tilt));
+  transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stk-left { left: -56px; }
+.stk-right { right: -56px; }
+
+/* Lapisan halaman untuk stiker yang sudah diseret: posisinya mengikuti halaman, bukan kartu */
+.stk-layer { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 15; }
+
+.stk.dragging {
+  z-index: 30;
+  cursor: grabbing;
+  transform: rotate(0deg) scale(1.14);
+}
+
+.stk.dragging img { filter: drop-shadow(0 16px 14px rgba(0, 0, 0, .28)); }
+
+.stk img {
+  max-width: 100%;
+  max-height: 100%;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .22));
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.stk:hover,
+.stk.open { transform: rotate(calc(var(--tilt) * -.4)) scale(1.08); }
+
+.stk:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 4px; border-radius: 14px; }
+
+/* balon teks yang muncul di atas stiker */
+.stk-bubble {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  padding: 6px 14px 7px;
+  white-space: nowrap;
+  border: 1px solid #e6dfcc;
+  border-radius: 12px;
+  background: #fffdf6;
+  color: var(--ink);
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .3);
+  font-family: "Patrick Hand", var(--sans);
+  font-size: 19px;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(6px) scale(.85);
+  transition: opacity .18s ease, transform .3s cubic-bezier(.3, 1.6, .5, 1);
+  pointer-events: none;
+}
+
+.stk-left .stk-bubble { left: 0; transform-origin: bottom left; }
+.stk-right .stk-bubble { right: 0; transform-origin: bottom right; }
+
+.stk.open .stk-bubble { opacity: 1; transform: none; }
+
+/* Layar tanpa ruang di kiri-kanan kartu: hanya stiker bertanda mobile,
+   lebih kecil, menempel di pojok kanan atas bagiannya. */
+@media (max-width: 1180px) {
+  .stk { --s: 64px; top: 8px; }
+  .stk-left, .stk-right { left: auto; right: 6px; }
+  .stk:not(.stk-mobile) { display: none; }
+  .stk .stk-bubble { left: auto; right: 0; font-size: 17px; transform-origin: bottom right; }
+}
+
+/* Stiker yang memutar musik: berputar pelan seperti piringan hitam selama lagu diputar */
+.stk-music.playing img { animation: spin 4s linear infinite; }
+
+/* Pemutar Spotify tetap ada (dibutuhkan untuk memutar lagu) tetapi tidak terlihat dan tidak bisa diklik */
+.np {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 300px;
+  height: 80px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.np iframe { display: block; border: 0; }
