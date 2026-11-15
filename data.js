@@ -168,7 +168,7 @@ window.PORTFOLIO = {
     featured: true menampilkan bintang ⭐
     tags    : dipakai untuk tombol filter (muncul kalau ada minimal 2 kategori berbeda)
     tools   : logo alat yang dipakai, tampil di samping tahun. Pilihan: laravel, php,
-              mysql, python, javascript (file SVG-nya di folder logos/tools/)
+              mysql, sqlite, python, javascript (file SVG-nya di folder logos/tools/)
     href    : tautan ke proyek (kosong = kartu tidak bisa diklik)
   */
   projects: [
@@ -176,7 +176,7 @@ window.PORTFOLIO = {
       year: 2026,
       title: "MPL Indonesia Dashboard",
       desc: "",
-      tools: ["python", "mysql", "javascript"],
+      tools: ["python", "sqlite", "javascript"],
       tags: ["Data"],
       featured: false,
       video: "projects/mpl.mp4",

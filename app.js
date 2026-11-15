@@ -336,7 +336,7 @@
   var SPANS = [4, 2, 2, 4, 3, 3]; // lebar kartu bergantian, tiap pasang = 6 kolom
 
   // Nama tampilan untuk logo alat (file-nya di logos/tools/<kunci>.svg)
-  var TOOLS = { laravel: "Laravel", php: "PHP", mysql: "MySQL", python: "Python", javascript: "JavaScript" };
+  var TOOLS = { laravel: "Laravel", php: "PHP", mysql: "MySQL", sqlite: "SQLite", python: "Python", javascript: "JavaScript" };
 
   // Video sampul proyek hanya diputar saat kartunya terlihat di layar (hemat baterai & data).
   var videoObserver = "IntersectionObserver" in window
