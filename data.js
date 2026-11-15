@@ -181,7 +181,7 @@ window.PORTFOLIO = {
       emoji: "🎮",
       colors: ["#0f6b5c", "#7fd1b9"],
       image: "",
-      href: "https://github.com/agaollineed/MPLDashboard",
+      href: "https://agaollineed.github.io/MPLDashboard/",
     },
     {
       year: 2026,
