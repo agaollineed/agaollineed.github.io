@@ -335,6 +335,9 @@
 
   var SPANS = [4, 2, 2, 4, 3, 3]; // lebar kartu bergantian, tiap pasang = 6 kolom
 
+  // Nama tampilan untuk logo alat (file-nya di logos/tools/<kunci>.svg)
+  var TOOLS = { laravel: "Laravel", php: "PHP", mysql: "MySQL", python: "Python", javascript: "JavaScript" };
+
   // Video sampul proyek hanya diputar saat kartunya terlihat di layar (hemat baterai & data).
   var videoObserver = "IntersectionObserver" in window
     ? new IntersectionObserver(function (entries) {
@@ -402,7 +405,23 @@
         card.appendChild(g);
       }
 
-      if (p.year) card.appendChild(el("span", "year", p.year)); // kosong = tanpa label tahun
+      // tahun + logo alat yang dipakai, berjajar di pojok kiri atas
+      var badges = el("div", "badges");
+      if (p.year) badges.appendChild(el("span", "year", p.year)); // kosong = tanpa label tahun
+      var tools = (p.tools || []).filter(function (t) { return TOOLS[t]; });
+      if (tools.length) {
+        var box = el("span", "tools");
+        box.setAttribute("aria-label", "Built with " + tools.map(function (t) { return TOOLS[t]; }).join(", "));
+        tools.forEach(function (t) {
+          var ic = el("img");
+          ic.src = "logos/tools/" + t + ".svg";
+          ic.alt = "";
+          ic.title = TOOLS[t];
+          box.appendChild(ic);
+        });
+        badges.appendChild(box);
+      }
+      if (badges.children.length) card.appendChild(badges);
       if (p.featured) {
         var star = el("span", "star", "⭐");
         star.title = "Featured";

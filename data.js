@@ -11,9 +11,9 @@ window.PORTFOLIO = {
   initials: "BH",
 
   // Banner berupa video (diputar otomatis, tanpa suara, berulang).
-  // banner.mp4 saat ini adalah video CONTOH: montase 13 detik dari 6 klip stok Mixkit
-  // (mixkit.co, "Stock Video Free License", tanpa wajib atribusi) — kampus, jendela
-  // pesawat, jalan pegunungan, perpustakaan, pantai, kereta. Ganti dengan videomu sendiri:
+  // banner.mp4 saat ini: montase highlight olahraga 13 detik dari 6 klip stok Mixkit
+  // (mixkit.co, "Stock Video Free License", tanpa wajib atribusi) — gol sepak bola,
+  // basket, tinju, servis tenis, dribel sepak bola, lari. Ganti dengan videomu sendiri:
   // taruh filenya di folder ini lalu tulis namanya di sini. Saran: MP4 (H.264),
   // lebar 960–1600 px, durasi 10–15 detik, ukuran di bawah 8 MB.
   bannerVideo: "banner.mp4",
@@ -167,6 +167,8 @@ window.PORTFOLIO = {
     colors  : dua warna sampul saat tidak ada video maupun gambar (ditambah emoji)
     featured: true menampilkan bintang ⭐
     tags    : dipakai untuk tombol filter (muncul kalau ada minimal 2 kategori berbeda)
+    tools   : logo alat yang dipakai, tampil di samping tahun. Pilihan: laravel, php,
+              mysql, python, javascript (file SVG-nya di folder logos/tools/)
     href    : tautan ke proyek (kosong = kartu tidak bisa diklik)
   */
   projects: [
@@ -174,6 +176,7 @@ window.PORTFOLIO = {
       year: 2026,
       title: "MPL Indonesia Dashboard",
       desc: "",
+      tools: ["python", "mysql", "javascript"],
       tags: ["Data"],
       featured: false,
       video: "projects/mpl.mp4",
@@ -187,6 +190,7 @@ window.PORTFOLIO = {
       year: 2026,
       title: "HIS (Hotel Integrated System)",
       desc: "",
+      tools: ["laravel", "php", "mysql"],
       tags: ["Web"],
       featured: false,
       video: "projects/his.mp4",
@@ -200,6 +204,7 @@ window.PORTFOLIO = {
       year: 2025,
       title: "RIS (Restaurant Integrated System)",
       desc: "",
+      tools: ["laravel", "javascript", "mysql"],
       tags: ["Web"],
       featured: false,
       video: "projects/ris.mp4",

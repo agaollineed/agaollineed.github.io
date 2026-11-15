@@ -479,7 +479,7 @@ p { margin: 0 0 16px; }
 }
 
 .project.has-video .label,
-.project.has-video .year,
+.project.has-video .badges,
 .project.has-video .star { z-index: 1; }
 
 .project .glyph {
@@ -495,7 +495,23 @@ p { margin: 0 0 16px; }
 
 .project:hover .glyph { transform: translateY(-4px) rotate(-4deg) scale(1.08); }
 
-.project .year { position: absolute; top: 12px; left: 12px; padding: 2px 8px; border-radius: 6px; background: #fff; color: #111; font-family: var(--serif); font-size: 14px; font-weight: 500; }
+/* Pojok kiri atas kartu: tahun lalu logo alat yang dipakai */
+.project .badges { position: absolute; top: 12px; left: 12px; display: flex; align-items: center; gap: 6px; }
+
+.project .year { padding: 2px 8px; border-radius: 6px; background: #fff; color: #111; font-family: var(--serif); font-size: 14px; font-weight: 500; line-height: 1.5; }
+
+.project .tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 25px;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* `position: static` membatalkan aturan gambar sampul (.project img) yang memenuhi kartu */
+.project .tools img { position: static; width: 17px; height: 17px; object-fit: contain; display: block; }
 
 .project .star { position: absolute; top: 9px; right: 12px; font-size: 18px; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .35)); }
 
